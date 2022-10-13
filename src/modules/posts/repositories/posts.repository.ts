@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { NotFoundError } from 'src/common/errors/types/NotFoundError';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { CreatePostDto } from '../dto/create-post.dto';
@@ -54,7 +54,9 @@ export class PostsRepository {
     return post;
   }
 
-  async findAll(skip?: number, take?: number): Promise<PostProps[]> {
+  async findAll(page?: number): Promise<PostProps[]> {
+    const limit = 5;
+    const newPage = page * limit - 5;
     const selectProps = {
       id: true,
       title: true,
@@ -62,22 +64,13 @@ export class PostsRepository {
       authorId: true,
     };
 
-    if (skip === 0 && take)
-      return this.prisma.post.findMany({
-        take,
-        select: selectProps,
-      });
-    else if (skip !== 0 && take)
-      return this.prisma.post.findMany({
-        take,
-        skip,
-        select: selectProps,
-      });
+    if (!page)
+      return this.prisma.post.findMany({ take: limit, select: selectProps });
     else
-      throw new BadRequestException({
-        code: 'BAD_REQUEST',
-        message: 'Query parameter required',
-        status: HttpStatus.BAD_REQUEST,
+      return this.prisma.post.findMany({
+        skip: newPage,
+        take: limit,
+        select: selectProps,
       });
   }
 

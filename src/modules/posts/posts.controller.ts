@@ -18,6 +18,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOperation,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -63,9 +64,10 @@ export class PostsController {
   @ApiOperation({ summary: 'Get all posts by query parameter' })
   @ApiResponse({ status: 200, description: 'OK' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiQuery({ name: 'page', required: false })
   @Get()
-  findAll(@Query('skip') skip: string, @Query('take') take: string) {
-    return this.postsService.findAll(+skip, +take);
+  findAll(@Query('page') page: string) {
+    return this.postsService.findAll(+page);
   }
 
   @ApiOperation({ summary: 'Get post by Id' })

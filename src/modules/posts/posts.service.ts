@@ -11,8 +11,8 @@ export class PostsService {
     return this.postsRepository.create(createPostDto, user);
   }
 
-  findAll(skip: number, take: number) {
-    return this.postsRepository.findAll(skip, take);
+  findAll(page: number) {
+    return this.postsRepository.findAll(page);
   }
 
   findById(id: string) {
